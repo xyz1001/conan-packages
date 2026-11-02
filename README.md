@@ -14,13 +14,13 @@ conan remote add xyz1001-conan https://gitlab.com/api/v4/projects/88391881/packa
 ```
 
 ### 2. 在项目中使用包
-在你的 `conanfile.py` 或 `conanfile.txt` 中直接引用：
+在你的 `conanfile.py` 或 `conanfile.txt` 中直接引用（与 ConanCenter 官方标准一致，无需携带 user/channel）：
 
 ```python
 # conanfile.py
 def requirements(self):
-    self.requires("elevate-kit/1.0.6@xyz1001/stable")
-    self.requires("webview/0.12.0@xyz1001/stable")
+    self.requires("elevate-kit/1.0.6")
+    self.requires("webview/0.12.0")
 ```
 
 安装并自动解析二进制（若平台无预编译会自动从配方编译）：
