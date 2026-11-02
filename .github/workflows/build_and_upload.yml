@@ -50,8 +50,14 @@ jobs:
         run: |
           conan profile detect --force
 
+      - name: Configure Linux Package Manager
+        if: runner.os == 'Linux'
+        run: |
+          echo "tools.system.package_manager:mode = install" >> ~/.conan2/global.conf
+          echo "tools.system.package_manager:sudo = True" >> ~/.conan2/global.conf
+
       - name: Setup Remote and Authenticate
-        if: github.event_name != 'pull_request' && (inputs.upload != false)
+        if: github.event_name != 'pull_request' && (github.event_name != 'workflow_dispatch' || inputs.upload == true)
         env:
           GITLAB_PROJECT_ID: ${{ secrets.GITLAB_PROJECT_ID }}
           GITLAB_USERNAME: ${{ secrets.GITLAB_USERNAME }}
@@ -65,6 +71,7 @@ jobs:
           IS_PR: ${{ github.event_name == 'pull_request' }}
           INPUT_UPLOAD: ${{ inputs.upload }}
           TARGET_PACKAGE: ${{ inputs.package }}
+          EVENT_NAME: ${{ github.event_name }}
         shell: bash
         run: |
           ARGS=""
@@ -72,9 +79,10 @@ jobs:
             ARGS="$ARGS --package $TARGET_PACKAGE"
           fi
 
-          # Only upload on main branch pushes or when manually triggered with upload=true
-          if [ "$IS_PR" != "true" ] && [ "$INPUT_UPLOAD" != "false" ]; then
-            ARGS="$ARGS --upload --remote gitlab"
+          if [ "$IS_PR" != "true" ]; then
+            if [ "$EVENT_NAME" != "workflow_dispatch" ] || [ "$INPUT_UPLOAD" = "true" ]; then
+              ARGS="$ARGS --upload --remote gitlab"
+            fi
           fi
 
           python scripts/build.py $ARGS
