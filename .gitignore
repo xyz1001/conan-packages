@@ -1,0 +1,12 @@
+# Conan cache / build files
+*.pyc
+__pycache__/
+.conan/
+build/
+CMakeUserPresets.json
+
+# IDE / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

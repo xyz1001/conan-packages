@@ -1,0 +1,80 @@
+name: Conan Build and Upload
+
+on:
+  push:
+    branches: [ "main" ]
+    paths:
+      - "recipes/**"
+      - "scripts/**"
+      - ".github/workflows/**"
+  pull_request:
+    branches: [ "main" ]
+    paths:
+      - "recipes/**"
+  workflow_dispatch:
+    inputs:
+      package:
+        description: "Package name to build (leave empty to build all)"
+        required: false
+        default: ""
+      upload:
+        description: "Upload artifacts to GitLab remote"
+        type: boolean
+        required: true
+        default: true
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install Conan
+        run: |
+          pip install conan
+          conan --version
+
+      - name: Detect Conan Profile
+        run: |
+          conan profile detect --force
+
+      - name: Setup Remote and Authenticate
+        if: github.event_name != 'pull_request' && (inputs.upload != false)
+        env:
+          GITLAB_PROJECT_ID: ${{ secrets.GITLAB_PROJECT_ID }}
+          GITLAB_USERNAME: ${{ secrets.GITLAB_USERNAME }}
+          GITLAB_TOKEN: ${{ secrets.GITLAB_TOKEN }}
+        run: |
+          conan remote add gitlab https://gitlab.com/api/v4/projects/${{ env.GITLAB_PROJECT_ID }}/packages/conan
+          conan remote login gitlab ${{ env.GITLAB_USERNAME }} -p ${{ env.GITLAB_TOKEN }}
+
+      - name: Build and Upload Packages
+        env:
+          IS_PR: ${{ github.event_name == 'pull_request' }}
+          INPUT_UPLOAD: ${{ inputs.upload }}
+          TARGET_PACKAGE: ${{ inputs.package }}
+        shell: bash
+        run: |
+          ARGS=""
+          if [ -n "$TARGET_PACKAGE" ]; then
+            ARGS="$ARGS --package $TARGET_PACKAGE"
+          fi
+
+          # Only upload on main branch pushes or when manually triggered with upload=true
+          if [ "$IS_PR" != "true" ] && [ "$INPUT_UPLOAD" != "false" ]; then
+            ARGS="$ARGS --upload --remote gitlab"
+          fi
+
+          python scripts/build.py $ARGS
