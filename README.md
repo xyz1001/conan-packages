@@ -19,13 +19,24 @@ conan remote add xyz1001-conan https://gitlab.com/api/v4/projects/88391881/packa
 ```python
 # conanfile.py
 def requirements(self):
-    self.requires("sample_pkg/1.0.0@xyz1001/stable")
+    self.requires("elevate-kit/1.0.6@xyz1001/stable")
+    self.requires("webview/0.12.0@xyz1001/stable")
 ```
 
 安装并自动解析二进制（若平台无预编译会自动从配方编译）：
 ```bash
 conan install . --build=missing
 ```
+
+---
+
+## 📦 当前已维护的包列表
+
+| 包名 | 版本 | 支持平台 | 简介 |
+| :--- | :--- | :--- | :--- |
+| **elevate-kit** | `1.0.6` | Windows / Linux | 桌面客户端无感提权 SDK |
+| **webkit2gtk** | `system` | Linux | WebKit GTK 系统库绑定 |
+| **webview** | `0.12.0` | Windows / Linux | 轻量级跨平台 Webview C/C++ 封装 |
 
 ---
 
