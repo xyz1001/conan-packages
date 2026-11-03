@@ -1,6 +1,9 @@
-# Conan Custom Packages
+# Conan Third-Party Packages (第三方库打包仓库)
 
-自维护的 Conan 2.x 第三方包仓库。通过 **GitHub Actions** 自动化跨平台构建（Windows / Linux），并将制品永久托管在 **GitLab Package Registry** 上。
+专门用于维护与分发**官方 ConanCenter 未合入或需要定制的第三方 C/C++ 库**。通过 **GitHub Actions** 自动化跨平台构建（Windows / Linux），并将二进制包与配方托管在 **GitLab Package Registry** 上。
+
+> [!NOTE]
+> 对于个人自研或自有开源项目（如 [elevate-kit](https://github.com/xyz1001/elevate-kit)），已采用在其**自身原仓库**直接构建发布模式，本仓库专注于外部第三方库的打包。
 
 ---
 
@@ -19,7 +22,6 @@ conan remote add xyz1001-conan https://gitlab.com/api/v4/projects/88391881/packa
 ```python
 # conanfile.py
 def requirements(self):
-    self.requires("elevate-kit/1.0.6")
     self.requires("webview/0.12.0")
 ```
 
@@ -30,11 +32,10 @@ conan install . --build=missing
 
 ---
 
-## 📦 当前已维护的包列表
+## 📦 当前已维护的第三方库列表
 
 | 包名 | 版本 | 支持平台 | 简介 |
 | :--- | :--- | :--- | :--- |
-| **elevate-kit** | `1.0.6` | Windows / Linux | 桌面客户端无感提权 SDK |
 | **webkit2gtk** | `system` | Linux | WebKit GTK 系统库绑定 |
 | **webview** | `0.12.0` | Windows / Linux | 轻量级跨平台 Webview C/C++ 封装 |
 

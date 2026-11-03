@@ -70,7 +70,7 @@ def main():
     # 2. Filter target recipes for build
     targets = find_recipe_dirs(recipes_dir, args.package)
     # Sort so that dependencies like webkit2gtk build before consumers like webview
-    order_priority = {"webkit2gtk": 0, "elevate-kit": 1, "webview": 2}
+    order_priority = {"webkit2gtk": 0, "webview": 1}
     targets.sort(key=lambda x: order_priority.get(x[0], 99))
 
     built_packages = []
