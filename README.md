@@ -17,12 +17,12 @@ conan remote add xyz1001-conan https://gitlab.com/api/v4/projects/88391881/packa
 ```
 
 ### 2. 在项目中使用包
-在你的 `conanfile.py` 或 `conanfile.txt` 中直接引用（与 ConanCenter 官方标准一致，无需携带 user/channel）：
+在你的 `conanfile.py` 或 `conanfile.txt` 中引用：
 
 ```python
 # conanfile.py
 def requirements(self):
-    self.requires("webview/0.12.0")
+    self.requires("webview/0.12.0@xyz1001/stable")
 ```
 
 安装并自动解析二进制（若平台无预编译会自动从配方编译）：
@@ -34,10 +34,10 @@ conan install . --build=missing
 
 ## 📦 当前已维护的第三方库列表
 
-| 包名 | 版本 | 支持平台 | 简介 |
-| :--- | :--- | :--- | :--- |
-| **webkit2gtk** | `system` | Linux | WebKit GTK 系统库绑定 |
-| **webview** | `0.12.0` | Windows / Linux | 轻量级跨平台 Webview C/C++ 封装 |
+| 包名 | 版本 | 完整引用 | 支持平台 | 简介 |
+| :--- | :--- | :--- | :--- | :--- |
+| **webkit2gtk** | `system` | `webkit2gtk/system@xyz1001/stable` | Linux | WebKit GTK 系统库绑定 |
+| **webview** | `0.12.0` | `webview/0.12.0@xyz1001/stable` | Windows / Linux | 轻量级跨平台 Webview C/C++ 封装 |
 
 ---
 
